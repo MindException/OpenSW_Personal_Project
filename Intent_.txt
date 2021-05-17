@@ -1,0 +1,13 @@
+	Button button = (Button) findViewById(R.id.sign_up);	//버튼 생성
+        	button.setOnClickListener(new View.OnClickListener(){     //버튼을 눌렀을 경우 발생
+
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(MainActivity.this, NewUser.class);       //첫 번째 매개변수는 자신, 두 번째는 이동
+                startActivity(intent);      //시작
+
+            }
+
+매개변수 첫 번째 것은 액티비티이름(자기자신).this
+매개변수 두 번째 것은 액티비티이름(이동할 곳).class 
