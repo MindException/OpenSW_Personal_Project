@@ -2,6 +2,8 @@ package com.cookandroid.opensw_3team_cafereviewproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.StringTokenizer;
+
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.provider.ContactsContract;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.content.Intent;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.google.firebase.database.DatabaseReference;          //이렇게 import 해줘야 사용이 가능하다.
 import com.google.firebase.database.FirebaseDatabase;
@@ -20,24 +23,26 @@ public class NewUser extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_user);
+        setContentView(R.layout.newuser);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getInstance().getReference();
 
-        Button cancle_Button = (Button)findViewById(R.id.cancle_button);
+        //취소버튼 누를시
+        ImageButton cancle_Button = (ImageButton) findViewById(R.id.cancle_button);
         cancle_Button.setOnClickListener(new View.OnClickListener(){ //버튼을 눌렀을 경우 발생
 
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(NewUser.this, MainActivity.class);       //첫 번째 매개변수는 자신, 두 번째는 이동
+                Intent intent = new Intent(NewUser.this, Login.class);       //첫 번째 매개변수는 자신, 두 번째는 이동
                 startActivity(intent);      //시작
 
             }
         });
 
-        Button sign_Button = (Button)findViewById(R.id.Sign_button);
+        //회원가입 버튼
+        ImageButton sign_Button = (ImageButton)findViewById(R.id.sign_button);
         sign_Button.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -50,25 +55,40 @@ public class NewUser extends AppCompatActivity {
                 String nickname = "";
                 String phonenum = "";
 
-                EditText idtext = (EditText) findViewById(R.id.EmailAddress);
+                //이메일은 다 찢어서 저장하여야 한다.
+                String id = "";
+                String site = "";
+                String domain = "";
+                String trash = "";
+
+                EditText idtext = (EditText) findViewById(R.id.emailAddress);
                 id_address = idtext.getText().toString();       //Email 저장
+
+                StringTokenizer st1 = new StringTokenizer(id_address, "@");
+                id = st1.nextToken();       //id저장
+                trash = st1.nextToken();
+
+                StringTokenizer st2 = new StringTokenizer(trash, ".");
+                site = st2.nextToken();     //사이트저장
+                domain = st2.nextToken();   //도메인저장
+
                 EditText pwtext= (EditText) findViewById(R.id.password);
                 passwd = pwtext.getText().toString();           //비번 저장
-                EditText nametext = (EditText)findViewById(R.id.editTextTextPersonName);
+                EditText nametext = (EditText)findViewById(R.id.personName);
                 name = nametext.getText().toString();           //이름 저장
-                EditText nicknametext = (EditText)findViewById(R.id.editTextTextPersonNickName);
+                EditText nicknametext = (EditText)findViewById(R.id.nickname);
                 nickname = nicknametext.getText().toString();   //별명 저장
-                EditText phonetext = (EditText)findViewById(R.id.editTextPhone);
+                EditText phonetext = (EditText)findViewById(R.id.phone);
                 phonenum = phonetext.getText().toString();      //전화번호 저장
 
                 //String 저장까지 성공
 
-                User user = new User(id_address,passwd, name, nickname, phonenum);     //유저 객체를 만든다.
+                User user = new User(site, domain, passwd, name, nickname, phonenum);     //유저 객체를 만든다.
 
                 System.out.println("성공");
 
                 //이제 db에 객체 저장
-                myRef.child("USER").setValue(user);
+                myRef.child("USER").child(id).setValue(user);       //이메일의 앞 부분을 키값으로 잡는다.
 
                 /*
 
@@ -78,8 +98,10 @@ public class NewUser extends AppCompatActivity {
 
 
 
-                //Intent intent2 = new Intent(NewUser.this, MainActivity.class);       //첫 번째 매개변수는 자신, 두 번째는 이동
-                //startActivity(intent2);      //시작
+                Intent intent2 = new Intent(NewUser.this, Login.class);       //첫 번째 매개변수는 자신, 두 번째는 이동
+                intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent2);      //시작
 
 
             }
