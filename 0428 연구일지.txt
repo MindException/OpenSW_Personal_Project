@@ -1,3 +1,0 @@
-04/28
-아파치 웹서버에서 프로젝트방향을 Firebase연동으로 변경하여 실제로 Firebase 프로젝트를 생성하여 보았다.
-주소는 https://console.firebase.google.com/project/opensw-3team-cafereviewdb/overview 이며, 이곳을 메인 DB로 사용할 예정이다.
